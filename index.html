@@ -18,6 +18,49 @@
 
     <script type="text/javascript">
 
+        function Model () {
+
+        }
+
+        Model.prototype = {
+            constructor: this,
+            // Private method
+            _set: function () {}, // Private `set` method to modify model attribute
+            // Public method
+            goNext: function () {},
+            goPrev: function () {},
+            goSpecify: function () {},
+            getCur: function () {} // For view to get model current state
+        }
+
+        function View (model) {
+            /*
+                this.model = model;
+                Object.observer(function(changes){
+
+                })
+            */
+        }
+
+        View.prototype = {
+            constructor: this,
+            goNext: function () {
+
+            },
+            goPrev: function () {   
+
+            },
+            goSpecify: function () {
+
+            }
+        }
+
+        if (!hasRegisterCustomElement) {
+
+        }
+
+
+
 
         /*
             Register custom element:
