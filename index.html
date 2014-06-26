@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <div is="carousel-container"><!-- 这个自定义标签的存在就会触发createdCallback和attachedCallback-->
+        <img src="./images/001.jpg">
+        <img src="./images/002.jpg">
+        <img src="./images/003.jpg">
+    </div>
+
+    <template>
+        <button is="carousel-button-prev">Prev</button>
+        <carousel-list><content></content></carousel-list>
+        <button is="carousel-button-next">Next</button>
+    </template>
+
+    <script type="text/javascript">
+        document.images[0].addEventListener("click", function (e) {
+            console.log(e);
+        }, false);
+
+
+        /*
+            Register custom element:
+            <carousel-container>
+        */
+        var proto = Object.create(HTMLDivElement.prototype);
+
+        proto.attachedCallback = function () {
+            var template = document.querySelector("template");
+            var templateContent = template.content.cloneNode(true);
+
+            var shadowRoot = this.createShadowRoot();
+            shadowRoot.appendChild(templateContent);
+        };
+
+        var carouselContainer = document.registerElement("carousel-container", {
+            prototype: proto,
+            extends: "div"
+        });
+
+
+
+        /*
+            Register custom element:
+            <carousel-button-prev>
+        */
+        var proto = Object.create(HTMLButtonElement.prototype);
+
+        proto.attachedCallback = function () {
+            /*
+                这样绑定事件是没有用的
+                shadow dom中的元素无法添加事件，
+                因为一旦添加事件就有可能被访问的风险（比如通过event.target）
+            */
+            // `this` 代指当前元素
+            this.addEventListener("click", function (e) {
+                console.log(e);
+            }, false);
+        };  
+
+        var carouselPrevBtn = document.registerElement("carousel-button-prev", {
+            prototype: proto,
+            extends: "button"
+        })        
+    </script>
+</body>
+</html>

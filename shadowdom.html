@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    <p><strong>Hello World</strong></p>
+    <template>
+        <style type="text/css">
+            span {
+                background: yellow;
+            }
+        </style>
+        <span><content></content></span>
+    </template>
+    <script type="text/javascript">
+        document.querySelector("strong").addEventListener("click", function (e) {
+            e.target.innerHTML = Math.random();
+        }, false);
+
+        var template = document.querySelector("template").content.cloneNode(true);
+        console.log(template);
+
+        var root = document.querySelector("p").createShadowRoot();
+        console.log(root);
+
+        root.appendChild(template);
+    </script>
+</body>
+</html>
