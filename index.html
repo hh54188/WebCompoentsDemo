@@ -17,7 +17,17 @@
     </template>
 
     <script type="text/javascript">
+        /*
+            Utitlity
+        */
+        var checkDataType = function (paramter, type) {
+            if (Object.prototype.toString.call(paramter) == "[object " + type.charAt(0).toUpperCase() + type.toLowerCase().slice(1) + "]") return true;
+            return false;
+        }
 
+        /*
+            Model
+        */
         function Model () {
 
         }
@@ -33,13 +43,46 @@
             getCur: function () {} // For view to get model current state
         }
 
-        function View (model) {
-            /*
-                this.model = model;
-                Object.observer(function(changes){
+        /*
+            View
+        */
 
-                })
+        function registerFactory (elemName, attachedCallback, extendElemType, proto) {
+
+            var proto = Object.create(proto? proto: HTMLElement.prototype);
+            proto.attachedCallback = attachedCallback || new Function ();
+
+            var customELement = extendElemType? document.registerElement(elemName, {
+                prototype: proto,
+                extends: extendElemType? extendElemType: null
+            }): document.registerElement(elemName, {
+                prototype: proto
+            });
+
+            return customELement;
+        }
+
+
+        function registerCustomElement () {
+
+            if (hasRegisterCustomElement) return;
+            hasRegisterCustomElement = true;
+            /*
+                Register custom element:
+                <carousel-container>
             */
+            registerFactory("carousel-container", Object.create(HTMLDivElement.prototype), "div", function () {
+
+            });
+        }
+
+        function View (model) {
+            
+            this.model = model;
+            Object.observer(this.model, function(changes){
+
+            });
+            
         }
 
         View.prototype = {
@@ -55,73 +98,6 @@
             }
         }
 
-        if (!hasRegisterCustomElement) {
-
-        }
-
-
-
-
-        /*
-            Register custom element:
-            <carousel-container>
-        */
-        var proto = Object.create(HTMLDivElement.prototype);
-
-        proto.attachedCallback = function () {
-            var template = document.querySelector("template");
-            var templateContent = template.content.cloneNode(true);
-        };
-
-        var carouselContainer = document.registerElement("carousel-container", {
-            prototype: proto,
-            extends: "div"
-        });
-
-        /*
-            Register custom element:
-            <carousel-item>
-        */
-        var proto = Object.create(HTMLImageElement.prototype);
-
-        proto.attachedCallback = function () {
-
-            this.addEventListener("mouseover", function () {
-                console.log("mouseover");
-            }, false);
-
-            this.addEventListener("mouseout", function () {
-                console.log("mouseout");
-            }, false);
-        };
-
-        var carouselItem = document.registerElement("carousel-item", {
-            prototype: proto,
-            extends: "img"
-        });
-
-        /*
-            Register custom element:
-            <carousel-button-prev>
-        */
-        var proto = Object.create(HTMLButtonElement.prototype);
-
-        proto.attachedCallback = function () {
-            /*
-                这样绑定事件是没有用的
-                shadow dom中的元素无法添加事件，
-                因为一旦添加事件就有可能被访问的风险（比如通过event.target）
-            */
-            // `this` 代指当前元素
-            this.addEventListener("click", function (e) {
-                console.log(e);
-            }, false);
-        };  
-
-        var carouselPrevBtn = document.registerElement("carousel-button-prev", {
-            prototype: proto,
-            extends: "button"
-        })        
     </script>
 </body>
 </html>
