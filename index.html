@@ -4,11 +4,11 @@
     <title></title>
 </head>
 <body>
-    <div is="carousel-container"><!-- 这个自定义标签的存在就会触发createdCallback和attachedCallback-->
+    <carousel-container>
         <img is="carousel-item" src="./images/001.jpg"> 
         <img is="carousel-item" src="./images/002.jpg">
         <img is="carousel-item" src="./images/003.jpg">
-    </div>
+    </carousel-container>
 
     <template>
         <button is="carousel-button-prev"></button>
@@ -17,13 +17,6 @@
     </template>
 
     <script type="text/javascript">
-        /*
-            Utitlity
-        */
-        var checkDataType = function (paramter, type) {
-            if (Object.prototype.toString.call(paramter) == "[object " + type.charAt(0).toUpperCase() + type.toLowerCase().slice(1) + "]") return true;
-            return false;
-        }
 
         /*
             Model
@@ -65,24 +58,54 @@
 
         function registerCustomElement () {
 
-            if (hasRegisterCustomElement) return;
-            hasRegisterCustomElement = true;
+            if (window.hasRegisterCustomElement) return;
+            window.hasRegisterCustomElement = true;
             /*
                 Register custom element:
                 <carousel-container>
             */
-            registerFactory("carousel-container", function () {
+            var dataElements;
 
-            }, "div");
+            var carouselContainer = registerFactory("carousel-container", function () {
+                
+                var childElement = this.firstElementChild;
+                var documentFragment = document.createDocumentFragment();
+
+                while (childElement) {
+                    documentFragment.appendChild(childElement.cloneNode(true));
+                    childElement = childElement.nextElementSibling;
+                }
+
+                dataElements = documentFragment;
+
+                while (this.firstChild) {
+                    this.removeChild(this.firstChild);
+                }
+
+                var template = document.querySelector("template");
+                var templateContent = template.content;
+
+                this.appendChild(templateContent);
+            });
+
+            var carouselList = registerFactory("carousel-list", function () {
+                debugger 
+            });
+
+            // document.body.appendChild(new carouselList());
+            // console.log(carouselList);
         }
 
         function View (model) {
-            
+
+            registerCustomElement();
+
             this.model = model;
-            Object.observer(this.model, function(changes){
+
+            if (!Object.observe) return;
+            Object.observe(model, function(changes){
 
             });
-            
         }
 
         View.prototype = {
@@ -97,6 +120,8 @@
 
             }
         }
+
+        new View({});
 
     </script>
 </body>
