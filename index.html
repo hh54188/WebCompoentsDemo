@@ -71,9 +71,9 @@
                 Register custom element:
                 <carousel-container>
             */
-            registerFactory("carousel-container", Object.create(HTMLDivElement.prototype), "div", function () {
+            registerFactory("carousel-container", function () {
 
-            });
+            }, "div");
         }
 
         function View (model) {
